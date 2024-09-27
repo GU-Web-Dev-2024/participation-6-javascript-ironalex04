@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Guessing Game</title>
+
+    <style>
+        body {
+            margin: auto;
+            max-width: 600px;
+            text-align: center;
+            padding: 15px;
+        }
+
+        body>div>div {
+            margin: 15px;
+        }
+
+        #guess-input {
+            width: 125px;
+        }
+
+        .outside {
+            border: 5px dotted rgb(0, 72, 255);
+            border-radius: 15px;
+            padding: 15px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="outside">
+
+        <h1>Guess the Number (1-10)</h1>
+
+        <hr>
+
+        <div>
+            <label for="guess-input">Guess:</label>
+            <input type="number" id="guess-input" min="1" max="10" placeholder="Enter your guess">
+        </div>
+
+        <div>
+            <button id="guess-button">Submit Guess</button>
+        </div>
+
+        <div>
+            <p id="message"></p>
+        </div>
+        <hr>
+    </div>
+
+    <script>
+
+        const randomNumber = Math.floor(Math.random() * 10) + 1;
+        let guessesLeft = 3;
+
+        // Function to check the player's guess
+        function checkGuess() {
+            const userGuess = parseInt(document.getElementById('guess-input').value);
+            const message = document.getElementById('message');
+
+            // Ensure valid input
+            if (isNaN(userGuess) || userGuess < 1 || userGuess > 10) {
+                message.textContent = "Enter a valid number between 1 and 10.";
+                return;
+            }
+
+            guessesLeft--;
+
+            if (userGuess === randomNumber) {
+                message.textContent = `Congratulations! You guessed the correct number ${randomNumber}.`;
+                document.getElementById('guess-button').disabled = true;
+            } else if (guessesLeft > 0) {
+                if (userGuess < randomNumber) {
+                    message.textContent = `Too low! You have ${guessesLeft} guesses left.`;
+                } else {
+                    message.textContent = `Too high! You have ${guessesLeft} guesses left.`;
+                }
+            } else {
+                message.textContent = `Game Over! The correct number was ${randomNumber}.`;
+                document.getElementById('guess-button').disabled = true;
+            }
+        }
+
+        // Add click listener to the button
+        document.getElementById('guess-button').addEventListener('click', checkGuess);
+
+    </script>
+</body>
+
+</html>

@@ -23,7 +23,7 @@
         }
 
         .outside {
-            border: 5px dotted rgb(0, 72, 255);
+            border: 5px dotted rgb(6, 159, 54);
             border-radius: 15px;
             padding: 15px;
         }
@@ -34,9 +34,17 @@
 <body>
     <div class="outside">
 
-        <h1>Guess the Number (1-10)</h1>
+        <h1>Guess the Number</h1>
 
         <hr>
+
+        <div>
+            <label for="min-range">Min Range:</label>
+            <input type="number" id="min-range" value="1">
+            <label for="max-range">Max Range:</label>
+            <input type="number" id="max-range" value="10">
+            <button id="set-range-button">Set Range</button>
+        </div>
 
         <div>
             <label for="guess-input">Guess:</label>
@@ -48,24 +56,54 @@
         </div>
 
         <div>
+            <button id="reset-button" style="display: none;">Play Again</button>
+        </div>
+
+        <div>
             <p id="message"></p>
         </div>
         <hr>
     </div>
 
     <script>
-
-        const randomNumber = Math.floor(Math.random() * 10) + 1;
+        // Initialize default min and max range, random number and guess count
+        let minRange = 1;
+        let maxRange = 10;
+        let randomNumber = Math.floor(Math.random() * (maxRange - minRange + 1)) + minRange;
         let guessesLeft = 3;
+
+        // Function to reset the game
+        function resetGame() {
+            guessesLeft = 3;
+            document.getElementById('message').textContent = "";
+            document.getElementById('guess-input').value = "";
+            document.getElementById('guess-button').disabled = false;
+            document.getElementById('reset-button').style.display = "none";
+            randomNumber = Math.floor(Math.random() * (maxRange - minRange + 1)) + minRange;
+        }
+
+        // Function to set the range
+        function setRange() {
+            minRange = parseInt(document.getElementById('min-range').value);
+            maxRange = parseInt(document.getElementById('max-range').value);
+
+            if (isNaN(minRange) || isNaN(maxRange) || minRange >= maxRange) {
+                document.getElementById('message').textContent = "Please enter a valid range.";
+            } else {
+                randomNumber = Math.floor(Math.random() * (maxRange - minRange + 1)) + minRange;
+                document.getElementById('message').textContent = `Range set from ${minRange} to ${maxRange}. Good luck!`;
+                resetGame();
+            }
+        }
 
         // Function to check the player's guess
         function checkGuess() {
             const userGuess = parseInt(document.getElementById('guess-input').value);
             const message = document.getElementById('message');
 
-            // Ensure valid input
-            if (isNaN(userGuess) || userGuess < 1 || userGuess > 10) {
-                message.textContent = "Enter a valid number between 1 and 10.";
+
+            if (isNaN(userGuess) || userGuess < minRange || userGuess > maxRange) {
+                message.textContent = `Please enter a valid number between ${minRange} and ${maxRange}.`;
                 return;
             }
 
@@ -74,6 +112,7 @@
             if (userGuess === randomNumber) {
                 message.textContent = `Congratulations! You guessed the correct number ${randomNumber}.`;
                 document.getElementById('guess-button').disabled = true;
+                document.getElementById('reset-button').style.display = "block";
             } else if (guessesLeft > 0) {
                 if (userGuess < randomNumber) {
                     message.textContent = `Too low! You have ${guessesLeft} guesses left.`;
@@ -83,12 +122,16 @@
             } else {
                 message.textContent = `Game Over! The correct number was ${randomNumber}.`;
                 document.getElementById('guess-button').disabled = true;
+                document.getElementById('reset-button').style.display = "block";
             }
         }
 
-        // Add click listener to the button
-        document.getElementById('guess-button').addEventListener('click', checkGuess);
-
+        // Add click listeners to buttons when the DOM content is fully loaded
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('guess-button').addEventListener('click', checkGuess);
+            document.getElementById('reset-button').addEventListener('click', resetGame);
+            document.getElementById('set-range-button').addEventListener('click', setRange);
+        });
     </script>
 </body>
 
